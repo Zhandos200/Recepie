@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .login-form h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .login-form label {
+            margin-bottom: 5px;
+            display: block;
+        }
+        .login-form input {
+            width: 93%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: rgb(24, 134, 77);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-form button:hover {
+            background-color: rgb(24, 108, 65);
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .register-link a {
+            color: rgb(24, 134, 77);
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="login-form">
+    <h2>Sign in</h2>
+    <form id="loginForm">
+        <label for="username">Username</label>
+        <input type="text" id="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+        <button type="button" id="loginBtn" style="margin-bottom: 10px;">Sign in</button>
+        <br>
+        <button type="button" onclick="signIn()">Sign in with Google</button> 
+
+    </form>
+    <div class="register-link">
+        <p>Don't have an account? <a href="registration.html">Register</a></p>
+    </div>
+</div>
+
+<script src="https://apis.google.com/js/api.js"></script>
+<script>
+    // Initialize Google API Client
+    function initClient() {
+        gapi.load('auth2', function () {
+            gapi.auth2.init({
+                client_id: '90830007065-fhe672iq475hv9o6jtnucp13iqgd8asj.apps.googleusercontent.com',
+                scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid'
+            });
+        });
+    }
+
+    // Google Sign-In Function
+    function signIn() {
+    const auth2 = gapi.auth2.getAuthInstance();
+    auth2.signIn().then(user => {
+        const profile = user.getBasicProfile();
+        const username = profile.getName();
+        const email = profile.getEmail();
+
+        
+        localStorage.setItem('email', email);
+        
+        if (username) {
+            localStorage.setItem('username', username);
+            window.location.href = 'profile.html'; // Redirect to the main page
+        } else {
+            alert('Please enter a username.');
+        }
+
+        
+    }).catch(error => {
+        console.error('Error signing in:', error);
+    });
+}
+
+
+    // Login Button Event Listener
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        const username = document.getElementById('username').value;
+        if (username) {
+            localStorage.setItem('username', username); // Save username to local storage
+            window.location.href = 'index.html'; // Redirect to the main page
+        } else {
+            alert('Please enter a username.');
+        }
+    });
+
+    // Initialize Google API Client on Load
+    window.onload = initClient;
+</script>
+</body>
+</html>
